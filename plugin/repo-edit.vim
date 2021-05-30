@@ -10,12 +10,18 @@ endif
 
 let g:loaded_repo_edit = 1
 
-function! RepoEdit(url) abort
+function! RepoEdit(url, branch = '') abort
+	let l:branch = ''
+	if len(a:branch) != 0
+	  let l:branch = ' --branch=' . a:branch
+	endif
+
 	let l:basename = system("basename " . a:url . " .git")
 	let l:repo_path = fnamemodify(tempname(),':h') . "/" . l:basename
-  execute "!git clone --depth=1 " . a:url . " " . l:repo_path
+	execute "!git clone --depth=1" . l:branch . ' ' . a:url . " " . l:repo_path
+
 	execute "lcd ". l:repo_path
 	edit .
 endfunction
 
-command! -nargs=1 RepoEdit call RepoEdit(<q-args>)
+command! -nargs=+ RepoEdit call RepoEdit(<f-args>)
