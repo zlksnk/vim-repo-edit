@@ -16,8 +16,13 @@ function! RepoEdit(url, branch = '') abort
 	  let l:branch = ' --branch=' . a:branch
 	endif
 
-	let l:basename = system("basename " . a:url . " .git")
-	let l:repo_path = fnamemodify(tempname(),':h') . "/" . l:basename
+	let l:basename = system("echo -n (" . "basename " . a:url . " .git" . ")")
+
+	let l:parent = system("dirname " . a:url)
+	let l:parent_name = system("echo -n (" . "basename " . l:parent . ")")
+
+	let l:repo_path = fnamemodify(tempname(),':h') . "/" . "repo-edit" . "/" .  l:parent_name  .  "/" . l:basename
+
 	execute "!git clone --depth=1" . l:branch . ' ' . a:url . " " . l:repo_path
 
 	execute "lcd ". l:repo_path
